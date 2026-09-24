@@ -6,7 +6,7 @@
   "scripts": {
     "studio": "remotion studio",
     "sfx": "python3 scripts/make_sfx.py",
-    "voices": "node scripts/generate-voices.mjs",
+    "voices": "NODE_USE_ENV_PROXY=1 node scripts/generate-voices.mjs",
     "render": "remotion render LaunchCode out/launch-code-steve.mp4"
   },
   "dependencies": {

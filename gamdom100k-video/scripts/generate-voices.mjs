@@ -53,7 +53,7 @@ const NOOO = {text: '[groaning] [frustrated] Nooo!', slot: 1.3};
 
 // Premade voice preferences by role; falls back to label matching, then any premade voice.
 const PREFS = {
-  commander: {names: ['Brian', 'Bill', 'Arnold', 'Adam', 'Clyde', 'George', 'Daniel'], gender: 'male', ages: ['middle', 'old']},
+  commander: {names: ['Brian', 'Bill', 'Arnold', 'Adam', 'Clyde', 'George', 'Daniel'], gender: 'male', ages: ['middle_aged', 'old']},
   tech: {names: ['Liam', 'Charlie', 'Callum', 'Will', 'Jeremy', 'Josh'], gender: 'male', ages: ['young']},
   alien: {names: ['Jessica', 'Laura', 'Charlotte', 'Lily', 'Freya', 'Gigi'], gender: 'female', ages: ['young']},
 };
