@@ -8,8 +8,8 @@ import {Alien} from '../components/Space';
 import {body, colors, comic, impact} from '../theme';
 import {EndCardContent} from './S7EndCard';
 
-const SHOUT = 30;
-const STING = 56;
+const SHOUT = 40;
+const STING = 62;
 
 export const S8Stinger: React.FC = () => {
   const f = useCurrentFrame();
@@ -74,7 +74,7 @@ export const S8Stinger: React.FC = () => {
       <Caption from={SHOUT} to={STING - 1} speaker="EVERYONE" text="STEEEVE!" big y={1600} color={colors.brand} />
 
       <Sfx name="popup" at={0} />
-      <Vo files={['alien.mp3']} at={3} toneFrequency={1.7} />
+      <Vo files={['alien.mp3']} at={2} playbackRate={1.35} toneFrequency={1.6} />
       <Vo files={['steve-1.mp3', 'steve-2.mp3', 'steve-3.mp3', 'steve-4.mp3', 'steve-5.mp3', 'steve-6.mp3', 'steve-1.m4a', 'steve-2.m4a', 'steve-3.m4a', 'steve-4.m4a', 'steve-5.m4a', 'steve-6.m4a']} at={SHOUT} stagger={2} />
       <Sfx name="crowd" at={SHOUT} volume={0.7} />
       <Sfx name="slam" at={SHOUT} />

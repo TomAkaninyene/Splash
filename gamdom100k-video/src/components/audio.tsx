@@ -25,14 +25,15 @@ export const Vo: React.FC<{
   stagger?: number;
   volume?: number;
   toneFrequency?: number;
-}> = ({files, at, stagger = 0, volume = 1, toneFrequency}) => (
+  playbackRate?: number;
+}> = ({files, at, stagger = 0, volume = 1, toneFrequency, playbackRate}) => (
   <>
     {files
       .map((f) => `vo/${f}`)
       .filter(hasFile)
       .map((f, i) => (
         <Sequence key={f} from={at + i * stagger} layout="none" name={f}>
-          <Audio src={staticFile(f)} volume={volume} toneFrequency={toneFrequency} />
+          <Audio src={staticFile(f)} volume={volume} toneFrequency={toneFrequency} playbackRate={playbackRate} />
         </Sequence>
       ))}
   </>

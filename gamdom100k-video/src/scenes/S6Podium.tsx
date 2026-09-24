@@ -9,6 +9,7 @@ import {lerp} from './common';
 
 const LAND = 26;
 const PLANT = 34;
+const VO_AT = 15;
 
 const Block: React.FC<{label: string; h: number; w: number; color: string}> = ({label, h, w, color}) => (
   <div style={{width: w, height: h, background: color, border: '6px solid #111', borderRadius: '14px 14px 0 0', display: 'flex', justifyContent: 'center', paddingTop: 20, boxSizing: 'border-box', fontFamily: impact, fontSize: w * 0.42, color: '#111'}}>
@@ -64,13 +65,13 @@ export const S6Podium: React.FC = () => {
             );
           })}
       </Shake>
-      <Caption from={PLANT + 4} to={89} speaker="COMMANDER" text="Gamdom… to number one." y={300} color={colors.brand} />
+      <Caption from={VO_AT} to={89} speaker="COMMANDER" text="Gamdom… to number one." y={300} color={colors.brand} />
 
       <Sfx name="rumble" at={0} volume={0.4} duration={LAND} />
       <Sfx name="stamp" at={LAND} />
       <Sfx name="flag" at={PLANT} />
       <Sfx name="sting" at={PLANT} volume={0.8} />
-      <Vo files={['commander-number-one.mp3']} at={PLANT + 4} />
+      <Vo files={['commander-number-one.mp3']} at={VO_AT} />
     </AbsoluteFill>
   );
 };

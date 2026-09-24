@@ -96,9 +96,9 @@ export const S3Rules: React.FC = () => {
       <Sfx name="accepted" at={0} />
       <Sfx name="siren" at={SIREN} volume={0.5} />
       <Sfx name="popup" at={SIREN + 2} />
-      <Vo files={['nooo-1.mp3', 'nooo-2.mp3', 'nooo-3.mp3', 'nooo-4.mp3']} at={GROAN} stagger={2} volume={0.8} />
+      <Vo files={['nooo-1.mp3', 'nooo-2.mp3', 'nooo-3.mp3', 'nooo-4.mp3']} at={GROAN} stagger={2} volume={0.6} />
       <Sfx name="typing" at={TYPING} volume={0.8} duration={DONE - TYPING} />
-      <Sfx name="accepted" at={DONE} />
+      <Sfx name="accepted" at={DONE} volume={0.5} />
     </AbsoluteFill>
   );
 };

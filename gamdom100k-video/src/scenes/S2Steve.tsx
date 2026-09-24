@@ -8,8 +8,9 @@ import {lerp} from './common';
 import {ScreenHeader} from './S1Password';
 
 const LETTERS = ['S', 'T', 'E', 'V', 'E'];
-export const SLAMS = [12, 30, 48, 66, 84];
-const LAUNCH = 88;
+const VO_AT = 8;
+export const SLAMS = [12, 34, 56, 76, 98];
+const LAUNCH = 102;
 
 export const S2Steve: React.FC = () => {
   const f = useCurrentFrame();
@@ -111,12 +112,12 @@ export const S2Steve: React.FC = () => {
       )}
 
       <Sfx name="alarm" at={0} volume={0.25} />
-      <Vo files={['tech-steve.mp3']} at={10} />
+      <Vo files={['tech-steve.mp3']} at={VO_AT} />
       {SLAMS.map((s) => (
-        <Sfx key={s} name="slam" at={s} />
+        <Sfx key={s} name="slam" at={s} volume={0.75} />
       ))}
-      <Sfx name="launch" at={LAUNCH - 2} />
-      <Sfx name="crash" at={LAUNCH + 3} />
+      <Sfx name="launch" at={LAUNCH - 2} volume={0.7} />
+      <Sfx name="crash" at={LAUNCH + 3} volume={0.6} />
     </AbsoluteFill>
   );
 };
