@@ -16,7 +16,9 @@ const cueOf = (name: string, id: string) => scene(name).cues.find((c) => c.id ==
 const during = (f: number, c: Cue, pad = 0) => f >= c.at - pad && f <= c.at + c.len + pad;
 
 /** Voice + caption for one cue. Captions double as placeholders when a line has no audio yet. */
-const Line: React.FC<{c: Cue; color?: string; big?: boolean; y?: number; noCaption?: boolean}> = ({c, color, big, y, noCaption}) => (
+export const CAPTION_Y = 1430;
+
+const Line: React.FC<{c: Cue; color?: string; big?: boolean; y?: number; noCaption?: boolean}> = ({c, color, big, y = CAPTION_Y, noCaption}) => (
   <>
     {c.file && (
       <Sequence from={c.audioAt} layout="none" name={c.id}>
@@ -79,14 +81,14 @@ export const FireScene: React.FC = () => {
   const glare = f >= spoil.at - 4;
   const asking = during(f, ask, 4);
   const neutral: Who = {expr: 'neutral', pose: 'down'};
-  const title = Math.min(lerp(f, 2, 22, 0, 1), lerp(f, gather.at + 50, gather.at + 70, 1, 0));
+  const title = lerp(f, gather.at + 70, gather.at + 90, 1, 0);
   return (
     <AbsoluteFill>
       <VillageScene
         elder={{expr: glare ? 'angry' : 'neutral', pose: glare || during(f, gather) ? 'point' : 'down'}}
         kids={[neutral, asking ? {expr: 'happy', pose: 'up'} : glare ? {expr: 'groan', pose: 'down'} : neutral, neutral, neutral]}
       />
-      <div style={{position: 'absolute', top: 230, width: '100%', textAlign: 'center', opacity: title}}>
+      <div style={{position: 'absolute', top: 330, width: '100%', textAlign: 'center', opacity: title}}>
         <div style={{fontFamily: serif, fontWeight: 900, fontSize: 84, lineHeight: 1.05, color: '#ffe3b0', letterSpacing: 4, textShadow: '0 0 30px rgba(255,160,60,0.8)'}}>
           TALES BY
           <br />
@@ -326,9 +328,9 @@ export const TrialsScene: React.FC = () => {
       {f >= b1 && f < b2 && <CrashTrial f={f - b1} len={b2 - b1} />}
       {f >= b2 && <RulesTrial f={f - b2} len={s.dur - b2} />}
       <Line c={c} noCaption />
-      <Caption from={c.at} to={b1 - 1} speaker="ELDER" text="He crossed the Mines…" color={colors.amber} />
-      <Caption from={b1} to={b2 - 1} speaker="ELDER" text="…he tamed the Crash…" color={colors.amber} />
-      <Caption from={b2} to={c.at + c.len + 10} speaker="ELDER" text="…he changed the rules… three times." color={colors.amber} />
+      <Caption from={c.at} to={b1 - 1} speaker="ELDER" text="He crossed the Mines…" color={colors.amber} y={CAPTION_Y} />
+      <Caption from={b1} to={b2 - 1} speaker="ELDER" text="…he tamed the Crash…" color={colors.amber} y={CAPTION_Y} />
+      <Caption from={b2} to={c.at + c.len + 10} speaker="ELDER" text="…he changed the rules… three times." color={colors.amber} y={CAPTION_Y} />
       {Array.from({length: 7}).map((_, i) => (
         <Sequence key={i} from={Math.round(((i + 1) * b1) / 7) - 2} layout="none">
           <Sfx name={i < 6 ? 'ding' : 'hop'} at={0} volume={0.35} />
@@ -412,7 +414,7 @@ export const EndScene: React.FC = () => {
   return (
     <AbsoluteFill>
       <EndCardContent f={f} />
-      <Line c={s.cues[0]} color={colors.brand} y={1420} />
+      <Line c={s.cues[0]} color={colors.brand} y={1470} />
       {[8, 11, 14, 17, 20].map((d) => (
         <Sfx key={d} name="slam" at={d} volume={0.35} />
       ))}
@@ -436,12 +438,8 @@ export const StingerScene: React.FC = () => {
   const idle: Who = {expr: 'neutral', pose: 'down'};
   if (f >= STING) {
     return (
-      <AbsoluteFill style={{background: colors.night, alignItems: 'center', justifyContent: 'center'}}>
-        <div style={{transform: `scale(${0.6 + 0.4 * k})`, display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-          <GamdomLogo height={120} />
-          <div style={{marginTop: 60, fontFamily: impact, fontSize: 130, color: colors.brand, letterSpacing: 6}}>CODE STEVE</div>
-          <div style={{marginTop: 30, fontFamily: body, fontWeight: 800, fontSize: 44, color: colors.muted}}>gamdom.com · 18+ · Play responsibly</div>
-        </div>
+      <AbsoluteFill>
+        <LogoCard k={k} />
         <Sfx name="sting" at={0} volume={0.5} />
       </AbsoluteFill>
     );
@@ -463,7 +461,7 @@ export const StingerScene: React.FC = () => {
       </Shake>
       {f < WAKE && <div style={{position: 'absolute', left: 820, top: 1120, fontFamily: serif, fontSize: 60, color: '#ffe3b0', opacity: 0.8}}>z z z</div>}
       <Line c={wake} />
-      <Caption from={SHOUT} to={STING - 1} speaker="EVERYONE" text="STEVE!" big color={colors.brand} />
+      <Caption from={SHOUT} to={STING - 1} speaker="EVERYONE" text="STEVE!" big color={colors.brand} y={CAPTION_Y} />
       <Ambience dur={STING} />
       {steveTakes.map((t, i) => (
         <Sequence key={t.file} from={SHOUT + i * 2 - Math.round(t.start * 30)} layout="none">
@@ -472,6 +470,125 @@ export const StingerScene: React.FC = () => {
       ))}
       <Sfx name="crowd" at={SHOUT} volume={0.4} />
       <Sfx name="launch" at={SHOUT} volume={0.4} />
+    </AbsoluteFill>
+  );
+};
+
+const LogoCard: React.FC<{k?: number}> = ({k = 1}) => (
+  <AbsoluteFill style={{background: colors.night, alignItems: 'center', justifyContent: 'center'}}>
+    <div style={{transform: `scale(${0.6 + 0.4 * k})`, display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 160}}>
+      <GamdomLogo height={120} />
+      <div style={{marginTop: 60, fontFamily: impact, fontSize: 130, color: colors.brand, letterSpacing: 6}}>CODE STEVE</div>
+      <div style={{marginTop: 30, fontFamily: body, fontWeight: 800, fontSize: 44, color: colors.muted}}>gamdom.com · 18+ · Play responsibly</div>
+    </div>
+  </AbsoluteFill>
+);
+
+// ---------- 3b. The false prophets ----------
+const IMPOSTORS = [
+  {name: 'STEPHEN', wrap: false, w: 210},
+  {name: 'STEVO', wrap: true, w: 200},
+  {name: 'STEEV', wrap: false, w: 240},
+];
+
+export const FalseScene: React.FC = () => {
+  const f = useCurrentFrame();
+  const s = scene('false');
+  const A = Math.floor(s.dur / 3);
+  const i = Math.min(2, Math.floor(f / A));
+  const t = f - i * A;
+  const who = IMPOSTORS[i];
+  const TYPE = 7;
+  const typed = Math.max(0, Math.min(who.name.length, Math.floor((t - TYPE) / 2) + 1));
+  const DENY = TYPE + who.name.length * 2 + 4;
+  const denied = t >= DENY;
+  const enter = lerp(t, 0, 6, -260, 0);
+  const exit = lerp(t, A - 6, A, 0, -300);
+  const blink = denied && Math.floor((t - DENY) / 4) % 2 === 0;
+  return (
+    <AbsoluteFill>
+      <Backdrop glow="#f7c77a">
+        <Oracle
+          x={330}
+          y={930}
+          glow={0.8}
+          screen={
+            <div style={{position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: denied ? (blink ? colors.red : '#7a0d15') : '#0b0f14', fontFamily: impact, fontSize: denied ? 50 : 64, color: denied ? '#fff' : colors.brand, letterSpacing: 3}}>
+              {denied ? 'ACCESS DENIED' : who.name.slice(0, typed)}
+            </div>
+          }
+        />
+        {/* The impostor walks up, types, gets rejected, slinks off */}
+        <Villager x={70 + enter + exit} y={1190} w={who.w} expr={denied ? 'shock' : 'confident'} pose={denied ? 'down' : 'type'} wrap={who.wrap} />
+        {/* The elder on the right shakes his head at each attempt */}
+        <div style={{position: 'absolute', left: 0, top: 0, transform: denied ? `translateX(${Math.sin(t * 1.4) * 8}px)` : undefined}}>
+          <Villager x={790} y={1180} w={220} expr={denied ? 'groan' : 'neutral'} pose={denied ? 'facepalm' : 'down'} wrap />
+        </div>
+        <Ground y={1560} />
+        {/* Big name card so the misspelling reads on a phone */}
+        {t >= TYPE && (
+          <div style={{position: 'absolute', top: 440, width: '100%', textAlign: 'center'}}>
+            <div style={{display: 'inline-block', position: 'relative', fontFamily: serif, fontWeight: 900, fontSize: 130, color: INK, letterSpacing: 6}}>
+              {who.name.slice(0, typed)}
+              {denied && (
+                <div style={{position: 'absolute', left: -10, right: -10, top: '52%', height: 14, background: colors.red, transform: `rotate(-6deg) scaleX(${lerp(t, DENY, DENY + 4, 0, 1)})`, transformOrigin: 'left'}} />
+              )}
+            </div>
+          </div>
+        )}
+      </Backdrop>
+      <Line c={s.cues[0]} />
+      {[0, 1, 2].map((k) => (
+        <Sequence key={k} from={k * A} layout="none">
+          {Array.from({length: IMPOSTORS[k].name.length}).map((_, j) => (
+            <Sfx key={j} name="key" at={TYPE + j * 2} volume={0.5} />
+          ))}
+          <Sfx name="denied" at={TYPE + IMPOSTORS[k].name.length * 2 + 4} volume={0.7} />
+        </Sequence>
+      ))}
+    </AbsoluteFill>
+  );
+};
+
+// ---------- 3c. "Were you there?" ----------
+export const ThereScene: React.FC = () => {
+  const f = useCurrentFrame();
+  const s = scene('there');
+  const [ask, it] = s.cues;
+  const neutral: Who = {expr: 'neutral', pose: 'down'};
+  const answering = f >= it.at - 2;
+  return (
+    <AbsoluteFill>
+      <VillageScene
+        elder={{expr: answering ? 'groan' : f >= ask.at + ask.len ? 'nervous' : 'neutral', pose: 'down'}}
+        kids={[neutral, during(f, ask, 4) ? {expr: 'neutral', pose: 'up'} : neutral, answering ? {expr: 'shock', pose: 'down'} : neutral, neutral]}
+      />
+      <Line c={ask} />
+      <Line c={it} />
+      <Ambience dur={s.dur} crickets />
+    </AbsoluteFill>
+  );
+};
+
+// ---------- 8. Callback ----------
+export const CallbackScene: React.FC = () => {
+  const f = useCurrentFrame();
+  const {fps} = useVideoConfig();
+  const s = scene('callback');
+  const POP = 4;
+  const pop = spring({frame: f - POP, fps, config: {damping: 9}});
+  return (
+    <AbsoluteFill>
+      <LogoCard />
+      {f >= POP && (
+        <div style={{position: 'absolute', top: 300, left: 130, right: 130, background: '#f1f1f1', borderRadius: 14, overflow: 'hidden', transform: `scale(${pop}) rotate(${(1 - pop) * -8}deg)`, boxShadow: '0 20px 60px rgba(0,0,0,0.6)'}}>
+          <div style={{background: colors.red, color: '#fff', fontFamily: impact, fontSize: 60, padding: '12px 26px'}}>⚠ RULES UPDATED</div>
+          <div style={{padding: '18px 26px 24px', fontFamily: body, fontWeight: 800, fontSize: 40, color: '#111'}}>Please read the new rules carefully.</div>
+        </div>
+      )}
+      <Line c={s.cues[0]} y={1560} />
+      <Sfx name="siren" at={POP} volume={0.35} duration={40} />
+      <Sfx name="popup" at={POP} />
     </AbsoluteFill>
   );
 };

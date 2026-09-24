@@ -10,7 +10,7 @@ const lines = cues.lines as Record<string, Line>;
 export const steveTakes = cues.steve as {file: string; start: number; mine: boolean}[];
 
 // The ElevenLabs elder is only a guide track, sped up a little; your own recording plays at 1×.
-const GUIDE_ELDER_RATE = 1.3;
+const GUIDE_ELDER_RATE = 1.2;
 // ElevenLabs "children" are young adult voices pitched up.
 export const KID_PITCH = 1.35;
 
@@ -52,60 +52,85 @@ const cue = (step: Step, at: number): Cue => {
 const SPECS: SceneSpec[] = [
   {
     name: 'fire',
-    lead: 36,
+    lead: 14,
     steps: [
       {id: 'elder-gather', speaker: 'ELDER', text: 'Children… gather round. Tonight I will tell you how Gamdom found its chosen one.'},
       {id: 'kid-code', speaker: 'CHILD', text: 'Is it the one about the code?', gap: 4},
       {id: 'elder-spoil', speaker: 'ELDER', text: "Don't spoil it.", gap: 6},
     ],
-    tail: 14,
+    tail: 12,
   },
   {
     name: 'dark',
-    lead: 26,
+    lead: 18,
     steps: [{id: 'elder-dark', speaker: 'ELDER', text: 'Long ago, Gamdom was strong… but not number one. The elders consulted the oracle.'}],
-    tail: 26,
+    tail: 20,
   },
   {
     name: 'prophecy',
-    lead: 34,
+    lead: 30,
     steps: [{id: 'elder-prophecy', speaker: 'ELDER', text: 'The prophecy said: one day, a man would come… who would do anything.'}],
-    tail: 16,
+    tail: 10,
+  },
+  {
+    name: 'false',
+    lead: 16,
+    steps: [{id: 'elder-false', speaker: 'ELDER', text: 'Many came. Many… spelled it wrong.'}],
+    tail: 12,
+    // Three failed attempts need room even if the line is short.
+    min: 105,
+  },
+  {
+    name: 'there',
+    lead: 6,
+    steps: [
+      {id: 'kid-there', speaker: 'CHILD', text: 'Grandpa, were you there?'},
+      // The pause before the answer is the joke.
+      {id: 'elder-it', speaker: 'ELDER', text: "…I was the oracle's IT guy.", gap: 16},
+    ],
+    tail: 14,
   },
   {
     name: 'trials',
-    lead: 8,
+    lead: 6,
     steps: [{id: 'elder-trials', speaker: 'ELDER', text: 'He crossed the Mines… he tamed the Crash… he changed the rules… three times.'}],
-    tail: 16,
+    tail: 12,
   },
   {
     name: 'why',
     lead: 4,
     steps: [
       {id: 'kid-why', speaker: 'CHILD', text: 'Why three times?'},
-      {id: 'elder-nobody', speaker: 'ELDER', text: 'Nobody knows.', gap: 6},
+      {id: 'elder-nobody', speaker: 'ELDER', text: 'Nobody knows.', gap: 8},
     ],
     tail: 14,
   },
   {
     name: 'crowning',
-    lead: 24,
+    lead: 18,
     steps: [{id: 'elder-written', speaker: 'ELDER', text: 'And so it was written: Gamdom… to number one.'}],
-    tail: 30,
+    tail: 26,
   },
   {
     name: 'endcard',
     lead: 14,
     steps: [{id: 'elder-code', speaker: 'ELDER', text: 'Sign up with code STEVE.'}],
-    tail: 20,
-    min: 90,
+    tail: 14,
+    min: 84,
   },
   {
     name: 'stinger',
-    lead: 26,
+    lead: 20,
     steps: [{id: 'kid-wake', speaker: 'CHILD', text: 'Wait… what was the code?'}],
-    // Room shout (~1 s) + logo sting follow the last line.
-    tail: 4 + 34 + 40,
+    // Room shout (~1 s) + a beat of logo before the callback.
+    tail: 4 + 34 + 22,
+  },
+  {
+    name: 'callback',
+    lead: 16,
+    steps: [{id: 'elder-four', speaker: 'ELDER', text: '…Four times.'}],
+    // Hold the final frame (code + 18+) so it also works as the thumbnail.
+    tail: 40,
   },
 ];
 

@@ -10,6 +10,8 @@ const API = 'https://api.elevenlabs.io';
 const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
 const OUT = path.join(ROOT, 'public', 'vo', 'legend');
 const TAKES = path.join(OUT, 'takes');
+// --only=a,b limits generation to lines whose name starts with one of these.
+const ONLY = (process.argv.find((a) => a.startsWith('--only=')) ?? '').slice(7).split(',').filter(Boolean);
 
 const KEY = (() => {
   if (process.env.ELEVENLABS_API_KEY) return process.env.ELEVENLABS_API_KEY.trim();
@@ -28,6 +30,10 @@ const LINES = [
   {name: 'elder-spoil', role: 'elder', takes: 2, text: '[stern] [annoyed] Do not spoil it.'},
   {name: 'elder-dark', role: 'elder', takes: 2, text: '[storytelling] [slow] Long ago, Gamdom was strong... but not number one. So the elders consulted the oracle.'},
   {name: 'elder-prophecy', role: 'elder', takes: 2, text: '[whispering] [mysterious] The prophecy said: one day, a man would come... who would do anything.'},
+  {name: 'elder-false', role: 'elder', takes: 2, text: '[grave] [slow] Many came. Many... spelled it wrong.'},
+  {name: 'kid-there', role: 'kidB', takes: 2, text: '[curious] [childlike] Grandpa, were you there?'},
+  {name: 'elder-it', role: 'elder', takes: 2, text: '[pause] [quietly] [matter-of-fact] ...I was the oracle\'s IT guy.'},
+  {name: 'elder-four', role: 'elder', takes: 2, text: '[long sigh] [tired] ...Four times.'},
   {name: 'elder-trials', role: 'elder', takes: 2, text: '[dramatic] He crossed the Mines... mostly. He tamed the Crash. He changed the rules... three times.'},
   {name: 'kid-why', role: 'kidB', takes: 2, text: '[curious] [childlike] Why three times?'},
   {name: 'elder-nobody', role: 'elder', takes: 2, text: '[flatly] [deadpan] Nobody knows.'},
@@ -61,7 +67,7 @@ const main = async () => {
   for (const [role, v] of Object.entries(voice)) console.log(`${role}: ${v.name.split(' ')[0]}`);
   fs.mkdirSync(TAKES, {recursive: true});
 
-  for (const line of LINES) {
+  for (const line of LINES.filter((l) => !ONLY.length || ONLY.some((o) => l.name.startsWith(o)))) {
     const takes = [];
     for (let i = 1; i <= line.takes; i++) {
       const out = path.join(TAKES, `${line.name}-${i}.mp3`);

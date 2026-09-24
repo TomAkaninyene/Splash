@@ -1,18 +1,21 @@
 import {AbsoluteFill, Audio, Sequence, staticFile} from 'remotion';
 import {firstExisting} from '../components/audio';
 import {Camera, Flash, Grade} from '../components/fx';
-import {CrowningScene, DarkScene, EndScene, FireScene, ProphecyScene, StingerScene, TrialsScene, WhyScene} from './Scenes';
+import {CallbackScene, CrowningScene, DarkScene, EndScene, FalseScene, FireScene, ProphecyScene, StingerScene, ThereScene, TrialsScene, WhyScene} from './Scenes';
 import {LEGEND_DURATION, scene} from './timing';
 
 const PARTS = [
   {name: 'fire', C: FireScene, push: 0.08},
   {name: 'dark', C: DarkScene, push: 0.05},
   {name: 'prophecy', C: ProphecyScene, push: 0.1},
+  {name: 'false', C: FalseScene, push: 0.05},
+  {name: 'there', C: ThereScene, push: 0.14},
   {name: 'trials', C: TrialsScene, push: 0.04},
   {name: 'why', C: WhyScene, push: 0.12},
   {name: 'crowning', C: CrowningScene, push: 0.06},
   {name: 'endcard', C: EndScene, push: 0.03},
   {name: 'stinger', C: StingerScene, push: 0.06},
+  {name: 'callback', C: CallbackScene, push: 0},
 ];
 
 // Music bed: public/music/legend.mp3 (or the shared track.mp3), mixed under the voices.
@@ -30,6 +33,7 @@ export const Legend: React.FC = () => (
         </Sequence>
       );
     })}
+    <Flash at={scene('there').from} color="#ffb060" length={6} />
     <Flash at={scene('why').from} color="#ffb060" length={6} />
     <Flash at={scene('crowning').from} color="#fff0c0" length={8} />
     <Flash at={scene('endcard').from} length={6} />
