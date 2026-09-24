@@ -1,0 +1,23 @@
+{
+  "name": "splash-promo-video",
+  "version": "1.0.0",
+  "private": true,
+  "description": "30-second vertical promo video for the Splash Android app, built with Remotion",
+  "scripts": {
+    "studio": "remotion studio",
+    "render": "remotion render SplashPromo out/splash-promo.mp4",
+    "still": "remotion still SplashPromo out/poster.png --frame=880"
+  },
+  "dependencies": {
+    "@fontsource/inter": "5.3.0",
+    "@fontsource/poppins": "5.3.0",
+    "@remotion/cli": "4.0.528",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "remotion": "4.0.528"
+  },
+  "devDependencies": {
+    "@types/react": "19.3.0",
+    "typescript": "7.0.2"
+  }
+}

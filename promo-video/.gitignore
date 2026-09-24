@@ -1,0 +1,4 @@
+node_modules/
+out/*
+!out/splash-promo.mp4
+!out/poster.png
