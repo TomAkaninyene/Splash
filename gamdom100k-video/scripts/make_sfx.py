@@ -211,6 +211,66 @@ def build():
     save('crowd', crowd, 0.6)
 
 
+def build_hotline():
+    # Ringback (two rings) and pickup click.
+    ring = np.zeros(int(SR * 3.2))
+    for start in (0.0, 1.8):
+        place(ring, fade(mix(tone(440, 1.2), tone(480, 1.2)) * 0.5, 0.02, 0.05), start)
+    save('ring', ring, 0.5)
+    save('pickup', mix(band(noise(0.04), 1000, 8000) * env(int(SR * 0.04), 0.001, 0.008), thud(0.15, 200, 120) * 0.4), 0.6)
+
+    # DTMF keys 1 and 2.
+    save('dtmf1', mix(tone(697, 0.16), tone(1209, 0.16)) * 0.5, 0.55)
+    save('dtmf2', mix(tone(697, 0.16), tone(1336, 0.16)) * 0.5, 0.55)
+
+    # Busy / hang-up tone.
+    busy = np.zeros(int(SR * 1.5))
+    for i in range(3):
+        place(busy, fade(mix(tone(480, 0.25), tone(620, 0.25)) * 0.5), i * 0.5)
+    save('busy', busy, 0.5)
+
+    # Cheesy hold music: soft electric-piano arpeggios over Cmaj7-Am7-Dm7-G7, 8 s loop.
+    bar = 2.0
+    chords = [[261.6, 329.6, 392.0, 493.9], [220.0, 261.6, 329.6, 392.0], [293.7, 349.2, 440.0, 523.3], [196.0, 246.9, 293.7, 349.2]]
+    hold = np.zeros(int(SR * bar * 4))
+    for c, notes in enumerate(chords):
+        for k in range(8):
+            f = notes[[0, 1, 2, 3, 2, 1, 2, 3][k]] * 2
+            n = tone(f, 0.24) + 0.3 * tone(f * 2, 0.24)
+            place(hold, n * env(len(n), 0.004, 0.09) * 0.35, c * bar + k * 0.25)
+        pad = sum(tone(f / 2, bar) for f in notes) * 0.06
+        place(hold, fade(pad, 0.1, 0.2), c * bar)
+    save('hold', hold, 0.5)
+
+    # Epic hold music: timpani hits and a swelling brass chord, 3 s.
+    ep = np.zeros(int(SR * 3.0))
+    for i, at in enumerate([0.0, 0.5, 1.0, 1.25, 1.5, 1.75, 2.0]):
+        place(ep, sweep(90, 60, 0.6) * env(int(SR * 0.6), 0.002, 0.18) * (0.6 + 0.1 * i), at)
+    brass = np.zeros(int(SR * 3.0))
+    for f in [130.8, 196.0, 261.6, 311.1]:
+        for h, a in [(1, 1), (2, 0.6), (3, 0.4), (4, 0.25), (5, 0.15)]:
+            brass += a * tone(f * h, 3.0) * 0.12
+    brass *= np.linspace(0.1, 1, len(brass)) ** 2
+    save('hold_epic', mix(ep, brass), 0.8)
+
+    # Clock fast-forward ticks for the time skip, 2 s.
+    ticks = np.zeros(int(SR * 2.0))
+    t0 = 0.0
+    gap = 0.12
+    while t0 < 1.95:
+        place(ticks, band(noise(0.02), 2500, 9000) * env(int(SR * 0.02), 0.0005, 0.004), t0)
+        t0 += gap
+        gap = max(0.03, gap * 0.9)
+    save('ticks', ticks, 0.5)
+
+    # Light switches clicking on across the building.
+    lights = np.zeros(int(SR * 1.6))
+    for i in range(12):
+        place(lights, band(noise(0.015), 1500, 7000) * env(int(SR * 0.015), 0.0005, 0.003) * rng.uniform(0.5, 1), i * 0.11 + rng.uniform(0, 0.04))
+    save('lights', lights, 0.6)
+
+
 if __name__ == '__main__':
     build()
+    build_hotline()
     print('wrote', sorted(os.listdir(OUT)))
