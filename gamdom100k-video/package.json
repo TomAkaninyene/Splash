@@ -7,11 +7,14 @@
     "studio": "remotion studio",
     "sfx": "python3 scripts/make_sfx.py",
     "voices": "NODE_USE_ENV_PROXY=1 node scripts/generate-voices.mjs",
-    "render": "remotion render LaunchCode out/launch-code-steve.mp4"
+    "render": "remotion render LaunchCode out/launch-code-steve.mp4",
+    "render:legend": "remotion render Legend out/legend-of-steve.mp4",
+    "measure": "python3 scripts/measure_vo.py"
   },
   "dependencies": {
     "@fontsource/anton": "5.3.0",
     "@fontsource/bangers": "5.3.0",
+    "@fontsource/cinzel": "5.3.0",
     "@fontsource/inter": "5.3.0",
     "@remotion/cli": "4.0.528",
     "react": "19.3.0",

@@ -4,6 +4,9 @@ import '@fontsource/anton/400.css';
 import '@fontsource/inter/500.css';
 import '@fontsource/inter/800.css';
 import '@fontsource/inter/900.css';
+import '@fontsource/cinzel/600.css';
+import '@fontsource/cinzel/700.css';
+import '@fontsource/cinzel/900.css';
 
 export const comic = "'Bangers', sans-serif";
 export const impact = "'Anton', sans-serif";
@@ -11,7 +14,7 @@ export const body = "'Inter', sans-serif";
 
 const fontsHandle = delayRender('Loading fonts');
 Promise.all(
-  ['400 1em Bangers', '400 1em Anton', '500 1em Inter', '800 1em Inter', '900 1em Inter'].map((f) =>
+  ['400 1em Bangers', '400 1em Anton', '500 1em Inter', '800 1em Inter', '900 1em Inter', '600 1em Cinzel', '700 1em Cinzel', '900 1em Cinzel'].map((f) =>
     document.fonts.load(f)
   )
 ).then(() => continueRender(fontsHandle));

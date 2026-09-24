@@ -1,0 +1,92 @@
+{
+ "lines": {
+  "elder-gather": {
+   "file": "vo/legend/elder-gather.mp3",
+   "start": 0.1,
+   "end": 7.57,
+   "mine": false
+  },
+  "kid-code": {
+   "file": "vo/legend/kid-code.mp3",
+   "start": 0.07,
+   "end": 1.44,
+   "mine": false
+  },
+  "elder-spoil": {
+   "file": "vo/legend/elder-spoil.mp3",
+   "start": 0.08,
+   "end": 1.85,
+   "mine": false
+  },
+  "elder-dark": {
+   "file": "vo/legend/elder-dark.mp3",
+   "start": 0.17,
+   "end": 7.32,
+   "mine": false
+  },
+  "elder-prophecy": {
+   "file": "vo/legend/elder-prophecy.mp3",
+   "start": 0.12,
+   "end": 7.46,
+   "mine": false
+  },
+  "elder-trials": {
+   "file": "vo/legend/elder-trials.mp3",
+   "start": 0.1,
+   "end": 8.71,
+   "mine": false
+  },
+  "kid-why": {
+   "file": "vo/legend/kid-why.mp3",
+   "start": 0.07,
+   "end": 1.47,
+   "mine": false
+  },
+  "elder-nobody": {
+   "file": "vo/legend/elder-nobody.mp3",
+   "start": 0.06,
+   "end": 1.33,
+   "mine": false
+  },
+  "elder-written": {
+   "file": "vo/legend/elder-written.mp3",
+   "start": 0.05,
+   "end": 4.72,
+   "mine": false
+  },
+  "elder-code": {
+   "file": "vo/legend/elder-code.mp3",
+   "start": 0.16,
+   "end": 2.58,
+   "mine": false
+  },
+  "kid-wake": {
+   "file": "vo/legend/kid-wake.mp3",
+   "start": 0.1,
+   "end": 1.9,
+   "mine": false
+  }
+ },
+ "steve": [
+  {
+   "file": "vo/legend/all-steve-2.mp3",
+   "start": 0.36,
+   "mine": false
+  },
+  {
+   "file": "vo/legend/all-steve-3.mp3",
+   "start": 0.18,
+   "mine": false
+  },
+  {
+   "file": "vo/legend/all-steve-4.mp3",
+   "start": 0.08,
+   "mine": false
+  },
+  {
+   "file": "vo/legend/all-steve-5.mp3",
+   "start": 0.15,
+   "mine": false
+  }
+ ]
+}

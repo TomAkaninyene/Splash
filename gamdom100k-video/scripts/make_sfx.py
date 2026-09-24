@@ -270,7 +270,72 @@ def build_hotline():
     save('lights', lights, 0.6)
 
 
+def build_legend():
+    # Campfire crackle, 12 s: soft roar plus random pops and snaps.
+    dur = 12.0
+    fire = band(noise(dur), 60, 900) * 0.25
+    for _ in range(420):
+        at = rng.uniform(0, dur - 0.05)
+        pop = band(noise(0.03), 1200, 9000) * env(int(SR * 0.03), 0.0005, rng.uniform(0.002, 0.008)) * rng.uniform(0.2, 1.0)
+        place(fire, pop, at)
+    for _ in range(25):
+        place(fire, band(noise(0.08), 400, 4000) * env(int(SR * 0.08), 0.001, 0.02) * 1.2, rng.uniform(0, dur - 0.1))
+    save('crackle', fire, 0.55)
+
+    # Crickets, 12 s.
+    cr = np.zeros(int(SR * dur))
+    for c in range(3):
+        f0 = [4300, 4700, 5100][c]
+        at = rng.uniform(0, 0.4)
+        while at < dur - 0.3:
+            for k in range(3):
+                ch = tone(f0, 0.025) * env(int(SR * 0.025), 0.002, 0.008)
+                place(cr, ch * 0.3, at + k * 0.045)
+            at += rng.uniform(0.5, 0.9)
+    save('crickets', cr, 0.25)
+
+    # Thunder: a sharp crack into a long rolling rumble.
+    crack = band(noise(0.25), 800, 9000) * env(int(SR * 0.25), 0.001, 0.05)
+    roll = band(noise(3.5), 25, 250) * env(int(SR * 3.5), 0.05, 1.1) * (1 + 0.5 * np.sin(2 * np.pi * 1.7 * t(3.5)))
+    save('thunder', mix(crack * 0.8, roll, thud(1.2, 60, 25) * 0.8), 0.95)
+
+    # Magic shimmer as the letters rise: rising bell arpeggio.
+    sh = np.zeros(int(SR * 2.4))
+    for i, f in enumerate([523.3, 659.3, 784.0, 1046.5, 1318.5, 1568.0, 2093.0, 2637.0]):
+        n = mix(tone(f, 1.2), tone(f * 2.01, 1.2) * 0.3)
+        place(sh, n * env(len(n), 0.003, 0.35) * 0.4, i * 0.14)
+    sh += band(noise(2.4), 5000, 11000) * np.linspace(0.15, 0, int(SR * 2.4))
+    save('shimmer', sh, 0.6)
+
+    # Hop onto a tile (soft wooden knock) and the gem ding.
+    save('hop', thud(0.18, 260, 140), 0.6)
+    save('ding', mix(tone(1568, 0.5), tone(2349, 0.5) * 0.4) * env(int(SR * 0.5), 0.002, 0.15), 0.5)
+
+    # Body fall for fainting villagers.
+    save('bodyfall', mix(thud(0.5, 90, 45), band(noise(0.2), 200, 2500) * env(int(SR * 0.2), 0.002, 0.04) * 0.5), 0.8)
+
+    # Talking-drum groove, 5 s: pitch-bending hits (the drum 'talks' by sliding pitch).
+    groove = np.zeros(int(SR * 5.0))
+    pattern = [(0.0, 180, 120), (0.375, 150, 210), (0.5, 180, 120), (0.75, 130, 190), (1.0, 180, 120), (1.25, 200, 140), (1.5, 150, 230), (1.75, 180, 120)]
+    for bar in range(int(5.0 / 2.0) + 1):
+        for (at, f0, f1) in pattern:
+            when = bar * 2.0 + at
+            if when > 4.8:
+                continue
+            hit = sweep(f0, f1, 0.28) * env(int(SR * 0.28), 0.002, 0.09)
+            place(groove, hit * 0.8, when)
+        for k in range(8):  # shaker
+            when = bar * 2.0 + k * 0.25 + 0.125
+            if when < 4.9:
+                place(groove, band(noise(0.05), 5000, 11000) * env(int(SR * 0.05), 0.003, 0.015) * 0.25, when)
+        for when in (bar * 2.0, bar * 2.0 + 1.0):  # low dundun
+            if when < 4.8:
+                place(groove, thud(0.4, 90, 50) * 0.7, when)
+    save('drums', groove, 0.8)
+
+
 if __name__ == '__main__':
     build()
     build_hotline()
+    build_legend()
     print('wrote', sorted(os.listdir(OUT)))

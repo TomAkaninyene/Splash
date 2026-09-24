@@ -21,6 +21,8 @@ export type PersonProps = {
   hairColor?: string;
   headwrap?: {base: string; accent: string};
   glasses?: boolean;
+  /** Fila cap (the elder). */
+  cap?: boolean;
   headset?: boolean;
   mustache?: boolean;
   badge?: string;
@@ -233,6 +235,13 @@ const Drawing: React.FC<PersonProps> = (p) => {
         </>
       )}
 
+      {p.cap && (
+        <g>
+          <path d="M42 78 Q38 18 104 16 Q170 18 160 78 Q100 62 42 78 Z" fill={p.hairColor ?? '#2a1d14'} stroke="#111" strokeWidth={3} />
+          <path d="M104 16 Q150 0 176 30 Q160 34 150 50 Z" fill={p.hairColor ?? '#2a1d14'} stroke="#111" strokeWidth={3} />
+        </g>
+      )}
+
       {/* Gele (head wrap) */}
       {p.headwrap && (
         <g>
@@ -293,6 +302,13 @@ export const cast = {
   tech: {skin: '#8D5A3B', shirt: '#159A8C', hair: 'short', hairColor: '#1b1b1b', glasses: true, headset: true},
   crewA: {skin: '#F1C7A5', shirt: '#6B3FA0', hair: 'bun', hairColor: '#7A3B12', headset: true},
   crewB: {skin: '#5C3A24', shirt: '#B8452F', hair: 'afro', hairColor: '#141414', headset: true},
+  elder: {skin: '#5a3a22', shirt: '#6b3a1a', hair: 'bald', hairColor: '#d9d4c7', cap: true, mustache: true},
+  kidA: {skin: '#6b4226', shirt: '#c0392b', hair: 'bun', hairColor: '#141414'},
+  kidB: {skin: '#5c3a24', shirt: '#2e86c1', hair: 'short', hairColor: '#141414'},
+  kidC: {skin: '#7a4b2a', shirt: '#f1c40f', hair: 'afro', hairColor: '#141414'},
+  kidD: {skin: '#4e3020', shirt: '#27ae60', hair: 'short', hairColor: '#141414'},
+  villager: {skin: '#5a3a22', shirt: '#7a4a20', hair: 'short', hairColor: '#141414'},
+  villagerB: {skin: '#5a3a22', shirt: '#7a4a20', headwrap: {base: '#7a4a20', accent: '#3a2410'}},
   auntie: {
     skin: '#6B4226',
     shirt: '#F2811D',
