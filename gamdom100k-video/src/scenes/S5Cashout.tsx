@@ -4,7 +4,7 @@ import {Caption} from '../components/Caption';
 import {ControlRoom} from '../components/ControlRoom';
 import {Flash, Shake} from '../components/fx';
 import {CrashGraph} from '../components/Space';
-import {body, colors, comic, impact} from '../theme';
+import {body, colors, impact} from '../theme';
 import {lerp} from './common';
 import {ScreenHeader} from './S1Password';
 
@@ -49,6 +49,7 @@ const Scene: React.FC<{f: number}> = ({f}) => {
     <Shake hits={[DOOR, SLAM, BOOM, BOOM + 4]} strength={28}>
       <ControlRoom
         alarm
+        screenLight={crashed ? colors.amber : colors.brand}
         hole={1}
         chairY={-3000}
         button={{pressed: f >= SLAM ? 1 : 0, glow: f < SLAM ? 0.6 + 0.4 * Math.sin(f / 3) : 0.2}}
@@ -100,20 +101,13 @@ export const S5Cashout: React.FC = () => {
         <Scene f={f} />
       )}
       {frozen && (
-        <div
-          style={{
-            position: 'absolute',
-            top: 760,
-            width: '100%',
-            display: 'flex',
-            justifyContent: 'center',
-            transform: `rotate(-12deg) scale(${2.4 - 1.4 * stamp})`,
-            opacity: Math.min(1, stamp * 2),
-          }}
-        >
-          <div style={{fontFamily: comic, fontSize: 190, color: colors.red, border: `14px solid ${colors.red}`, borderRadius: 30, padding: '0 40px', background: 'rgba(255,255,255,0.85)', letterSpacing: 6}}>
+        <div style={{position: 'absolute', top: 700, width: '100%', textAlign: 'center', opacity: Math.min(1, stamp * 2)}}>
+          <div style={{height: 6, background: colors.red, width: `${stamp * 100}%`, margin: '0 auto', boxShadow: `0 0 20px ${colors.red}`}} />
+          <div style={{fontFamily: impact, fontSize: 200, lineHeight: 1.05, color: '#fff', letterSpacing: 10, textShadow: `0 0 40px ${colors.red}`, transform: `scale(${1.3 - 0.3 * stamp})`}}>
             CLOSE CALL
           </div>
+          <div style={{fontFamily: body, fontWeight: 800, fontSize: 40, letterSpacing: 6, color: colors.red}}>CASHED OUT 11.20x · CRASH AT 11.24x</div>
+          <div style={{height: 6, background: colors.red, width: `${stamp * 100}%`, margin: '16px auto 0', boxShadow: `0 0 20px ${colors.red}`}} />
         </div>
       )}
       <Flash at={BOOM} color={colors.amber} length={10} />

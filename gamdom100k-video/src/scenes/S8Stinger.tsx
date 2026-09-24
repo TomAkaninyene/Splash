@@ -4,8 +4,8 @@ import {GamdomLogo} from '../components/Brand';
 import {Caption} from '../components/Caption';
 import {ControlRoom} from '../components/ControlRoom';
 import {Shake} from '../components/fx';
-import {Alien} from '../components/Space';
-import {body, colors, comic, impact} from '../theme';
+import {NightAlien} from '../components/Space';
+import {body, colors, impact} from '../theme';
 import {EndCardContent} from './S7EndCard';
 
 const SHOUT = 40;
@@ -26,7 +26,7 @@ export const S8Stinger: React.FC = () => {
             <EndCardContent f={99} animate={false} />
           </AbsoluteFill>
           <div style={{position: 'absolute', left: 300, top: 1920 - 620 * alienUp}}>
-            <Alien width={480} sign={false} drip={1} mouth="flat" />
+            <NightAlien width={480} sign={false} drip={1} />
           </div>
           <Caption from={3} to={SHOUT - 1} speaker="ALIEN (DRIPPING)" text="…what was the code?" y={560} color="#b98cff" />
         </>
@@ -37,6 +37,7 @@ export const S8Stinger: React.FC = () => {
             alarm
             hole={1}
             chairY={-3000}
+            screenLight={colors.brand}
             screen={<AbsoluteFill style={{background: colors.brand}} />}
             commander={{expr: 'scream', pose: 'up'}}
             tech={{expr: 'scream', pose: 'up', dy: -10}}
@@ -50,11 +51,11 @@ export const S8Stinger: React.FC = () => {
               top: 300,
               width: '100%',
               textAlign: 'center',
-              fontFamily: comic,
-              fontSize: 250,
+              fontFamily: impact,
+              fontSize: 230,
               color: '#fff',
-              WebkitTextStroke: '10px #111',
-              textShadow: `0 14px 0 ${colors.brandDark}`,
+              letterSpacing: 6,
+              textShadow: `0 0 60px ${colors.brand}, 0 8px 30px #000`,
               transform: `scale(${0.4 + 0.6 * shout}) rotate(-4deg)`,
             }}
           >
@@ -75,10 +76,10 @@ export const S8Stinger: React.FC = () => {
 
       <Sfx name="popup" at={0} />
       <Vo files={['alien.mp3']} at={2} playbackRate={1.35} toneFrequency={1.6} />
-      <Vo files={['steve-1.mp3', 'steve-2.mp3', 'steve-3.mp3', 'steve-4.mp3', 'steve-5.mp3', 'steve-6.mp3', 'steve-1.m4a', 'steve-2.m4a', 'steve-3.m4a', 'steve-4.m4a', 'steve-5.m4a', 'steve-6.m4a']} at={SHOUT} stagger={2} />
-      <Sfx name="crowd" at={SHOUT} volume={0.7} />
-      <Sfx name="slam" at={SHOUT} />
-      <Sfx name="sting" at={STING} />
+      <Vo files={['steve-1.mp3', 'steve-2.mp3', 'steve-3.mp3', 'steve-4.mp3', 'steve-5.mp3', 'steve-6.mp3', 'steve-1.m4a', 'steve-2.m4a', 'steve-3.m4a', 'steve-4.m4a', 'steve-5.m4a', 'steve-6.m4a']} at={SHOUT} stagger={2} volume={0.45} />
+      <Sfx name="crowd" at={SHOUT} volume={0.45} />
+      <Sfx name="slam" at={SHOUT} volume={0.6} />
+      <Sfx name="sting" at={STING} volume={0.55} />
     </AbsoluteFill>
   );
 };

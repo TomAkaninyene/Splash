@@ -1,7 +1,10 @@
-import {interpolate, spring, useCurrentFrame, useVideoConfig} from 'remotion';
-import {body, colors, comic} from '../theme';
+import {interpolate, useCurrentFrame} from 'remotion';
+import {body, colors, impact} from '../theme';
 
-/** Speaker-labelled subtitle. Most X viewers watch muted, so every line is captioned. */
+/**
+ * Film-style subtitle with a small speaker label. Most X viewers watch muted, so every line
+ * is captioned. `big` is for shouted lines.
+ */
 export const Caption: React.FC<{
   from: number;
   to: number;
@@ -10,50 +13,32 @@ export const Caption: React.FC<{
   color?: string;
   big?: boolean;
   y?: number;
-}> = ({from, to, speaker, text, color = colors.amber, big, y = 1540}) => {
+}> = ({from, to, speaker, text, color = colors.amber, big, y = 1580}) => {
   const frame = useCurrentFrame();
-  const {fps} = useVideoConfig();
   if (frame < from || frame > to) return null;
-  const pop = spring({frame: frame - from, fps, config: {damping: 12, mass: 0.6}});
-  const out = interpolate(frame, [to - 5, to], [1, 0], {extrapolateLeft: 'clamp'});
+  const o = Math.min(
+    interpolate(frame, [from, from + 4], [0, 1], {extrapolateRight: 'clamp'}),
+    interpolate(frame, [to - 4, to], [1, 0], {extrapolateLeft: 'clamp'})
+  );
   return (
-    <div
-      style={{
-        position: 'absolute',
-        top: y,
-        left: 50,
-        right: 50,
-        display: 'flex',
-        justifyContent: 'center',
-        opacity: out,
-        transform: `scale(${0.7 + 0.3 * pop})`,
-      }}
-    >
-      <div
-        style={{
-          background: 'rgba(0,0,0,0.82)',
-          borderRadius: 26,
-          padding: '18px 34px 22px',
-          textAlign: 'center',
-          border: `3px solid ${color}`,
-          maxWidth: 960,
-        }}
-      >
-        <div style={{fontFamily: body, fontWeight: 900, fontSize: 30, letterSpacing: 3, color}}>
+    <div style={{position: 'absolute', top: y, left: 60, right: 60, textAlign: 'center', opacity: o}}>
+      {speaker && (
+        <div style={{fontFamily: body, fontWeight: 800, fontSize: 26, letterSpacing: 8, color, marginBottom: 8, textShadow: '0 2px 10px #000'}}>
           {speaker}
         </div>
-        <div
-          style={{
-            fontFamily: big ? comic : body,
-            fontWeight: 800,
-            fontSize: big ? 96 : 58,
-            lineHeight: 1.1,
-            color: colors.white,
-            letterSpacing: big ? 3 : 0,
-          }}
-        >
-          {text}
-        </div>
+      )}
+      <div
+        style={{
+          fontFamily: big ? impact : body,
+          fontWeight: big ? 400 : 700,
+          fontSize: big ? 110 : 54,
+          lineHeight: 1.12,
+          letterSpacing: big ? 4 : 0,
+          color: colors.white,
+          textShadow: '0 3px 14px rgba(0,0,0,0.95), 0 0 2px #000',
+        }}
+      >
+        {text}
       </div>
     </div>
   );

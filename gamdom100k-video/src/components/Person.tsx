@@ -33,6 +33,8 @@ export type PersonProps = {
   typePhase?: number;
   sweat?: number;
   width?: number;
+  /** Internal: draw as a dark backlit silhouette (set via the `rim` prop on Person). */
+  silhouette?: boolean;
 };
 
 const SHOULDER_L = [50, 196] as const;
@@ -193,7 +195,7 @@ const Face: React.FC<{expr: Expr}> = ({expr}) => {
   }
 };
 
-export const Person: React.FC<PersonProps> = (p) => {
+const Drawing: React.FC<PersonProps> = (p) => {
   const {l, r} = arms(p.pose, p.slam, p.typePhase);
   const hairColor = p.hairColor ?? '#1b1b1b';
   const w = p.width ?? 200;
@@ -242,12 +244,19 @@ export const Person: React.FC<PersonProps> = (p) => {
         </g>
       )}
 
-      <Face expr={p.expr} />
+      {p.silhouette ? <Glints expr={p.expr} /> : <Face expr={p.expr} />}
 
       {p.mustache && (
         <path d="M70 118 Q86 104 100 116 Q114 104 130 118 Q116 126 100 120 Q84 126 70 118 Z" fill={hairColor} stroke="#111" strokeWidth={2} />
       )}
-      {p.glasses && (
+      {p.glasses && p.silhouette && (
+        <g>
+          <circle cx={76} cy={94} r={20} fill="rgba(160,255,210,0.18)" stroke="#1b2230" strokeWidth={4} />
+          <circle cx={124} cy={94} r={20} fill="rgba(160,255,210,0.18)" stroke="#1b2230" strokeWidth={4} />
+          <path d="M64 86 L76 80 M112 86 L124 80" stroke="rgba(255,255,255,0.8)" strokeWidth={3} strokeLinecap="round" />
+        </g>
+      )}
+      {p.glasses && !p.silhouette && (
         <g stroke="#111" strokeWidth={4} fill="rgba(180,220,255,0.25)">
           <circle cx={76} cy={94} r={20} />
           <circle cx={124} cy={94} r={20} />
@@ -259,7 +268,7 @@ export const Person: React.FC<PersonProps> = (p) => {
           <path d="M40 92 Q40 26 100 26 Q160 26 160 92" stroke="#2b2b2b" strokeWidth={9} fill="none" />
           <rect x={30} y={82} width={20} height={34} rx={8} fill="#2b2b2b" />
           <path d="M40 114 Q46 140 76 138" stroke="#2b2b2b" strokeWidth={5} fill="none" />
-          <circle cx={78} cy={138} r={6} fill="#2b2b2b" />
+          <circle cx={78} cy={138} r={6} fill={p.silhouette ? '#39ff9c' : '#2b2b2b'} />
         </g>
       )}
       {p.sweat ? (
@@ -291,3 +300,40 @@ export const cast = {
     pattern: {dots: ['#1FA64A', '#FFD23F', '#1FA64A', '#7B2CBF', '#FFD23F', '#1FA64A']},
   },
 } satisfies Record<string, Omit<PersonProps, 'expr' | 'pose'>>;
+
+/** In silhouette mode faces are dark; only wide eyes catch the light. */
+const Glints: React.FC<{expr: Expr}> = ({expr}) => {
+  if (!['shock', 'frozen', 'scream', 'angry'].includes(expr)) return null;
+  const r = expr === 'angry' ? 4 : 6;
+  return (
+    <g fill="rgba(255,255,255,0.9)">
+      <ellipse cx={76} cy={94} rx={r} ry={expr === 'angry' ? 3 : r} />
+      <ellipse cx={124} cy={94} rx={r} ry={expr === 'angry' ? 3 : r} />
+    </g>
+  );
+};
+
+const SIL = {body: '#0a0d15', head: '#0c1019', hair: '#06070b'};
+
+/**
+ * A cast member. With `rim` set they are drawn as a dark silhouette, rim-lit by the room
+ * (screen glow / alarm light) — the cinematic look. Without it, the flat cartoon drawing.
+ */
+export const Person: React.FC<PersonProps & {rim?: string}> = ({rim, ...p}) => {
+  if (!rim) return <Drawing {...p} />;
+  const dark: PersonProps = {
+    ...p,
+    skin: SIL.head,
+    shirt: SIL.body,
+    hairColor: SIL.hair,
+    badge: p.badge ? '#5a4614' : undefined,
+    pattern: p.pattern ? {dots: p.pattern.dots.map(() => '#24140a')} : undefined,
+    headwrap: p.headwrap ? {base: '#1a0d05', accent: '#10200f'} : undefined,
+    silhouette: true,
+  };
+  return (
+    <div style={{filter: `drop-shadow(0 0 1.5px ${rim}) drop-shadow(0 0 16px ${rim}77)`}}>
+      <Drawing {...dark} />
+    </div>
+  );
+};

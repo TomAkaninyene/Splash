@@ -27,6 +27,7 @@ export const S1Password: React.FC = () => {
       <Shake hits={[DENIED]} strength={16}>
         <ControlRoom
           alarm
+          screenLight={denied ? colors.red : '#5fe3ff'}
           screen={
             <>
               <ScreenHeader />
@@ -86,7 +87,7 @@ export const S1Password: React.FC = () => {
         />
       </Shake>
       <Caption from={6} to={60} speaker="COMMANDER" text="Enter the launch code." />
-      <Caption from={DENIED + 6} to={119} speaker="EVERYONE" text="*facepalm*" color={colors.red} />
+      <Caption from={DENIED + 6} to={119} speaker="" text="[ collective facepalm ]" />
 
       <Sfx name="alarm" at={0} volume={0.3} />
       <Vo files={['commander-launch.mp3']} at={6} />

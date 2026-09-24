@@ -24,6 +24,7 @@ export const S3Rules: React.FC = () => {
       <Shake hits={[SIREN + 2]} strength={14}>
         <ControlRoom
           alarm={f >= SIREN}
+          screenLight={f >= SIREN ? '#ffffff' : colors.brand}
           hole={1}
           chairY={-3000}
           screen={
@@ -91,7 +92,7 @@ export const S3Rules: React.FC = () => {
         />
       </Shake>
       <Caption from={GROAN} to={TYPING + 20} speaker="EVERYONE" text="Nooo!" big color={colors.red} />
-      <Caption from={TYPING + 22} to={119} speaker="CREW" text="*types at the speed of light*" />
+      <Caption from={TYPING + 22} to={119} speaker="" text="[ typing intensifies ]" />
 
       <Sfx name="accepted" at={0} />
       <Sfx name="siren" at={SIREN} volume={0.5} />

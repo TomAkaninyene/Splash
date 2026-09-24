@@ -1,6 +1,6 @@
 import {AbsoluteFill, Audio, Sequence, staticFile} from 'remotion';
 import {firstExisting} from './components/audio';
-import {Flash} from './components/fx';
+import {Camera, Flash, Grade} from './components/fx';
 import {S1Password} from './scenes/S1Password';
 import {S2Steve} from './scenes/S2Steve';
 import {S3Rules} from './scenes/S3Rules';
@@ -29,13 +29,16 @@ export const LaunchCode: React.FC = () => (
   <AbsoluteFill style={{background: '#000'}}>
     {scenes.map(({name, from, to, C}) => (
       <Sequence key={name} name={name} from={from} durationInFrames={to - from}>
-        <C />
+        <Camera duration={to - from} push={name.startsWith('7') || name.startsWith('8') ? 0.03 : 0.07}>
+          <C />
+        </Camera>
       </Sequence>
     ))}
     {/* Punchy white flashes on the big cuts */}
     <Flash at={T.flight} />
     <Flash at={T.podium} />
     <Flash at={T.endcard} length={6} />
+    <Grade />
     {music && (
       <Audio
         src={staticFile(music)}

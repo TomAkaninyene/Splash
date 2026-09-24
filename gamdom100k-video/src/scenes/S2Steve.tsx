@@ -32,6 +32,7 @@ export const S2Steve: React.FC = () => {
       <Shake hits={[...SLAMS, LAUNCH + 4]} strength={30}>
         <ControlRoom
           alarm
+          screenLight={colors.brand}
           hole={lerp(f, LAUNCH + 3, LAUNCH + 8, 0, 1)}
           chairY={launched ? -1700 * fly : 0}
           chairSpin={launched ? fly * 200 : 0}
@@ -94,22 +95,7 @@ export const S2Steve: React.FC = () => {
         text={LETTERS.slice(0, shown).map((l) => `${l}!`).join(' ')}
         big
       />
-      {launched && (
-        <div
-          style={{
-            position: 'absolute',
-            top: 1560,
-            width: '100%',
-            textAlign: 'center',
-            fontFamily: impact,
-            fontSize: 70,
-            color: colors.amber,
-            opacity: lerp(f, LAUNCH + 20, LAUNCH + 28, 0, 1),
-          }}
-        >
-          …where did the chair go?
-        </div>
-      )}
+      <Caption from={LAUNCH + 12} to={149} speaker="" text="[ the chair has left the building ]" />
 
       <Sfx name="alarm" at={0} volume={0.25} />
       <Vo files={['tech-steve.mp3']} at={VO_AT} />

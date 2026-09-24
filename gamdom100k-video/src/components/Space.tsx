@@ -3,18 +3,42 @@ import {colors, impact} from '../theme';
 export const Rocket: React.FC<{size: number; flame: number}> = ({size, flame}) => (
   <svg width={size} height={size * 0.5} viewBox="-60 0 260 100" style={{overflow: 'visible'}}>
     {/* Flame */}
+    <ellipse cx={-10 - flame * 20} cy={50} rx={60 + flame * 30} ry={26} fill={colors.amber} opacity={0.25} style={{filter: 'blur(8px)'}} />
     <path d={`M20 34 Q${-30 - flame * 30} 50 20 66 Z`} fill={colors.amber} />
     <path d={`M20 40 Q${-8 - flame * 18} 50 20 60 Z`} fill="#fff4c2" />
     {/* Fins */}
     <path d="M40 22 L20 0 L64 22 Z" fill={colors.red} stroke="#111" strokeWidth={4} />
     <path d="M40 78 L20 100 L64 78 Z" fill={colors.red} stroke="#111" strokeWidth={4} />
     {/* Body */}
-    <path d="M20 26 L150 26 Q196 50 150 74 L20 74 Z" fill="#f4f6fb" stroke="#111" strokeWidth={5} />
+    <defs>
+      <linearGradient id="hull" x1="0" x2="0" y1="0" y2="1">
+        <stop offset="0" stopColor="#ffffff" />
+        <stop offset="0.45" stopColor="#d7dde8" />
+        <stop offset="1" stopColor="#7d8799" />
+      </linearGradient>
+    </defs>
+    <path d="M20 26 L150 26 Q196 50 150 74 L20 74 Z" fill="url(#hull)" stroke="#1a1f2b" strokeWidth={3} />
     <path d="M150 26 Q196 50 150 74 Z" fill={colors.red} stroke="#111" strokeWidth={4} />
     <circle cx={128} cy={50} r={13} fill="#6fc3ff" stroke="#111" strokeWidth={4} />
     <text x={40} y={60} fontFamily={impact} fontSize={26} fill={colors.brandDark} letterSpacing={2}>
       STEVE
     </text>
+  </svg>
+);
+
+export const NightPlane: React.FC<{width: number; blink: boolean; hasCup: boolean}> = ({width, blink, hasCup}) => (
+  <svg width={width} height={width * 0.42} viewBox="0 0 400 170" style={{overflow: 'visible', filter: 'drop-shadow(0 0 1.5px #9fc4ff) drop-shadow(0 0 12px #9fc4ff55)'}}>
+    <path d="M40 80 Q20 60 60 56 L330 56 Q380 60 390 80 Q380 104 330 106 L60 106 Q20 100 40 80 Z" fill="#0b0f18" />
+    <path d="M300 56 L360 6 L382 6 L352 56 Z" fill="#0b0f18" />
+    <path d="M170 86 L250 160 L286 160 L240 86 Z" fill="#0b0f18" />
+    {[100, 130, 160, 190, 220, 250, 280].map((x) => (
+      <rect key={x} x={x} y={70} width={12} height={8} rx={3} fill="#ffd98a" opacity={0.85} />
+    ))}
+    <path d="M42 80 Q48 64 76 62 L76 80 Z" fill="#ffe7b0" opacity={0.9} />
+    <circle cx={62} cy={70} r={8} fill="#0b0f18" />
+    {hasCup && <rect x={70} y={66} width={6} height={8} fill="#0b0f18" />}
+    <circle cx={272} cy={156} r={6} fill={blink ? '#ff3040' : '#3a0a10'} style={{filter: blink ? 'drop-shadow(0 0 10px #ff3040)' : undefined}} />
+    <circle cx={372} cy={8} r={5} fill={blink ? '#ffffff' : '#333'} style={{filter: blink ? 'drop-shadow(0 0 10px #fff)' : undefined}} />
   </svg>
 );
 
@@ -41,6 +65,51 @@ export const Cup: React.FC<{size: number; spin: number}> = ({size, spin}) => (
     <path d="M14 14 L46 14 L42 54 L18 54 Z" fill="#fff" stroke="#111" strokeWidth={4} />
     <rect x={12} y={8} width={36} height={8} rx={3} fill="#5b3a1f" stroke="#111" strokeWidth={3} />
     <rect x={16} y={28} width={28} height={10} fill="#5b3a1f" />
+  </svg>
+);
+
+/** Backlit alien silhouette with glowing eyes and a light-up CASH OUT sign. */
+export const NightAlien: React.FC<{width: number; sign?: boolean; drip?: number; wave?: number; shocked?: boolean}> = ({
+  width,
+  sign = true,
+  drip = 0,
+  wave = 0,
+  shocked,
+}) => (
+  <svg width={width} height={width * 1.3} viewBox="0 0 300 390" style={{overflow: 'visible', filter: 'drop-shadow(0 0 2px #b98cff) drop-shadow(0 0 18px #b98cff66)'}}>
+    <path d="M120 60 Q100 10 80 0" stroke="#0b0f18" strokeWidth={6} fill="none" />
+    <path d="M180 60 Q200 10 220 0" stroke="#0b0f18" strokeWidth={6} fill="none" />
+    <circle cx={80} cy={0} r={10} fill="#ff5fd2" style={{filter: 'drop-shadow(0 0 8px #ff5fd2)'}} />
+    <circle cx={220} cy={0} r={10} fill="#ff5fd2" style={{filter: 'drop-shadow(0 0 8px #ff5fd2)'}} />
+    <path d="M100 250 Q100 200 150 200 Q200 200 200 250 L210 390 L90 390 Z" fill="#0b0f18" />
+    <ellipse cx={150} cy={130} rx={95} ry={80} fill="#0b0f18" />
+    <ellipse cx={112} cy={124} rx={shocked ? 26 : 22} ry={shocked ? 30 : 16} fill="#9dffcf" style={{filter: 'drop-shadow(0 0 12px #9dffcf)'}} />
+    <ellipse cx={188} cy={124} rx={shocked ? 26 : 22} ry={shocked ? 30 : 16} fill="#9dffcf" style={{filter: 'drop-shadow(0 0 12px #9dffcf)'}} />
+    {drip > 0 && (
+      <g opacity={Math.min(1, drip)}>
+        <path d="M70 90 Q90 40 150 44 Q210 40 230 90 Q214 80 200 100 Q190 80 176 110 Q164 84 150 104 Q136 84 124 112 Q110 84 100 104 Q86 80 70 90 Z" fill="#3b2412" />
+        <path d="M90 64 Q150 40 210 64" stroke="rgba(255,220,180,0.5)" strokeWidth={4} fill="none" />
+        {[
+          [100, 104, 40],
+          [176, 110, 60],
+          [138, 112, 30],
+        ].map(([x, y, d], i) => (
+          <g key={i}>
+            <ellipse cx={x} cy={y + drip * d} rx={6} ry={9} fill="#3b2412" />
+            <circle cx={x - 2} cy={y + drip * d - 3} r={2} fill="rgba(255,230,200,0.8)" />
+          </g>
+        ))}
+      </g>
+    )}
+    {sign && (
+      <g transform={`rotate(${Math.sin(wave) * 6} 150 260)`}>
+        <rect x={146} y={250} width={10} height={140} fill="#0b0f18" />
+        <rect x={20} y={190} width={260} height={100} rx={10} fill="#10131c" stroke="#ff3040" strokeWidth={5} style={{filter: 'drop-shadow(0 0 14px #ff3040)'}} />
+        <text x={150} y={262} textAnchor="middle" fontFamily={impact} fontSize={62} fill="#ff4a58" style={{filter: 'drop-shadow(0 0 8px #ff3040)'}}>
+          CASH OUT
+        </text>
+      </g>
+    )}
   </svg>
 );
 
@@ -140,7 +209,7 @@ export const CrashGraph: React.FC<{
             );
           })}
         <path d={`${d} L${tx} ${h - pad} L${pad} ${h - pad} Z`} fill={`${lineColor}22`} />
-        <path d={d} stroke={lineColor} strokeWidth={12} fill="none" strokeLinecap="round" strokeLinejoin="round" />
+        <path d={d} stroke={lineColor} strokeWidth={10} fill="none" strokeLinecap="round" strokeLinejoin="round" style={{filter: `drop-shadow(0 0 10px ${lineColor})`}} />
       </svg>
       {rocket && !crashed && (
         <div style={{position: 'absolute', left: tx - rocketSize / 2, top: ty - rocketSize / 4, transform: `rotate(${angle}deg)`, transformOrigin: `${rocketSize / 2}px ${rocketSize / 4}px`}}>

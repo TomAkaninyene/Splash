@@ -18,6 +18,9 @@ const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..')
 const VO = path.join(ROOT, 'public', 'vo');
 const TAKES = path.join(VO, 'takes');
 const GO = process.argv.includes('--go');
+// --only=auntie,steve limits generation to those groups (names of LINES entries, or 'nooo' / 'steve').
+const ONLY = (process.argv.find((a) => a.startsWith('--only=')) ?? '').slice(7).split(',').filter(Boolean);
+const wanted = (name) => !ONLY.length || ONLY.some((o) => name.startsWith(o));
 
 const loadKey = () => {
   if (process.env.ELEVENLABS_API_KEY) return process.env.ELEVENLABS_API_KEY.trim();
@@ -48,7 +51,10 @@ const LINES = [
   {name: 'commander-number-one', role: 'commander', takes: 3, slot: 1.8, text: '[dramatic] [slowly] Gamdom... to number one.'},
   {name: 'commander-code', role: 'commander', takes: 3, slot: 1.4, text: '[confident] Code STEVE.'},
   {name: 'alien', role: 'alien', takes: 2, slot: 0.9, text: '[confused] ...what was the code?'},
+  {name: 'auntie', role: 'auntie', takes: 3, slot: 1.3, text: '[strong Nigerian accent] [shouting] [exasperated] Will you PRESS IT!'},
 ];
+// The room shouting the code in the stinger: one take per voice, layered in the edit.
+const STEVE = {text: '[shouting] [excited] STEEEEVE!', voices: 6};
 const NOOO = {text: '[groaning] [frustrated] Nooo!', slot: 1.3};
 
 // Premade voice preferences by role; falls back to label matching, then any premade voice.
@@ -56,6 +62,7 @@ const PREFS = {
   commander: {names: ['Brian', 'Bill', 'Arnold', 'Adam', 'Clyde', 'George', 'Daniel'], gender: 'male', ages: ['middle_aged', 'old']},
   tech: {names: ['Liam', 'Charlie', 'Callum', 'Will', 'Jeremy', 'Josh'], gender: 'male', ages: ['young']},
   alien: {names: ['Jessica', 'Laura', 'Charlotte', 'Lily', 'Freya', 'Gigi'], gender: 'female', ages: ['young']},
+  auntie: {names: ['Matilda', 'Alice', 'Bella', 'Lily'], gender: 'female', ages: ['middle_aged', 'old']},
 };
 
 const duration = (file) =>
@@ -115,13 +122,13 @@ const main = async () => {
     used.add(v.voice_id);
     return v;
   };
-  const voices = {commander: pick('commander'), tech: pick('tech'), alien: pick('alien')};
+  const voices = {commander: pick('commander'), tech: pick('tech'), alien: pick('alien'), auntie: pick('auntie')};
   for (const [role, v] of Object.entries(voices)) console.log(`${role}: ${v.name}`);
 
   fs.mkdirSync(TAKES, {recursive: true});
 
   // 3. Lines with multiple takes; keep the take that best fits its slot.
-  for (const line of LINES) {
+  for (const line of LINES.filter((l) => wanted(l.name))) {
     const takes = [];
     for (let i = 1; i <= line.takes; i++) {
       const out = path.join(TAKES, `${line.name}-${i}.mp3`);
@@ -135,11 +142,20 @@ const main = async () => {
 
   // 4. "Nooo!" in four different voices, layered in the edit.
   const others = premade.filter((v) => !Object.values(voices).some((x) => x.voice_id === v.voice_id));
-  const groaners = [...others.slice(0, 3), voices.tech].slice(0, 4);
+  const groaners = wanted('nooo') ? [...others.slice(0, 3), voices.tech].slice(0, 4) : [];
   for (let i = 0; i < groaners.length; i++) {
     const out = path.join(VO, `nooo-${i + 1}.mp3`);
     await tts(groaners[i].voice_id, NOOO.text, out);
     console.log(`nooo-${i + 1}: ${groaners[i].name} (${duration(out).toFixed(2)}s)`);
+  }
+  // 5. "STEEEVE!" from the whole room.
+  if (wanted('steve')) {
+    const shouters = [voices.commander, voices.tech, voices.auntie, ...others].slice(0, STEVE.voices);
+    for (let i = 0; i < shouters.length; i++) {
+      const out = path.join(VO, `steve-${i + 1}.mp3`);
+      await tts(shouters[i].voice_id, STEVE.text, out);
+      console.log(`steve-${i + 1}: ${shouters[i].name.split(' ')[0]} (${duration(out).toFixed(2)}s)`);
+    }
   }
   console.log(`Done with model ${MODEL}. Re-render to hear them: npm run render`);
 };

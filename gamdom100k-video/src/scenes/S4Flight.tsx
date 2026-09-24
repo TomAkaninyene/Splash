@@ -2,8 +2,9 @@ import {AbsoluteFill, interpolateColors, useCurrentFrame} from 'remotion';
 import {Sfx} from '../components/audio';
 import {Chair} from '../components/ControlRoom';
 import {Shake} from '../components/fx';
-import {Alien, CrashGraph, Cup, Plane} from '../components/Space';
-import {colors, comic, impact} from '../theme';
+import {CrashGraph, Cup, NightAlien, NightPlane} from '../components/Space';
+import {Caption} from '../components/Caption';
+import {colors, impact} from '../theme';
 import {clamp, lerp} from './common';
 
 export const FLIGHT_LEN = 210;
@@ -19,7 +20,8 @@ const SPLAT = 184;
 export const S4Flight: React.FC = () => {
   const f = useCurrentFrame();
   const m = flightM(f);
-  const sky = interpolateColors(m, [1, 2.5, 5, 10], ['#58b4ff', '#2c5fc4', '#101845', colors.night]);
+  const sky = interpolateColors(m, [1, 2, 4, 10], ['#1d3f78', '#0f2250', '#060c24', '#020308']);
+  const horizon = lerp(m, 1, 6, 1180, 1900);
   const planeX = lerp(f, PLANE[0], PLANE[1], 1150, -520);
   const planeY = 430;
   const cupFall = f - CUP_DROP;
@@ -45,6 +47,19 @@ export const S4Flight: React.FC = () => {
             }}
           />
         ))}
+        {/* Earth's curve falls away as we climb */}
+        <div
+          style={{
+            position: 'absolute',
+            left: -1460,
+            top: horizon,
+            width: 4000,
+            height: 4000,
+            borderRadius: '50%',
+            background: 'radial-gradient(circle at 50% 0%, #1b3a66 0%, #0a1830 20%, #050b16 40%)',
+            boxShadow: '0 -20px 80px 20px rgba(90,170,255,0.45), inset 0 20px 60px rgba(150,210,255,0.35)',
+          }}
+        />
         {/* Clouds rush past at low altitude */}
         {[0, 1, 2, 3].map((i) => (
           <div
@@ -56,7 +71,7 @@ export const S4Flight: React.FC = () => {
               width: 380,
               height: 120,
               borderRadius: 80,
-              background: '#fff',
+              background: 'radial-gradient(ellipse, rgba(200,220,255,0.35) 0%, transparent 70%)',
               opacity: lerp(m, 1.5, 3, 0.9, 0),
             }}
           />
@@ -69,7 +84,7 @@ export const S4Flight: React.FC = () => {
         {/* Plane + pilot dropping his coffee */}
         {f >= PLANE[0] && f <= PLANE[1] && (
           <div style={{position: 'absolute', left: planeX, top: planeY}}>
-            <Plane width={440} pilotShock={f >= CUP_DROP - 4} hasCup={f < CUP_DROP} />
+            <NightPlane width={440} blink={Math.floor(f / 6) % 2 === 0} hasCup={f < CUP_DROP} />
           </div>
         )}
         {cupFall >= 0 && f < CUP_DROP + 40 && (
@@ -77,11 +92,7 @@ export const S4Flight: React.FC = () => {
             <Cup size={60} spin={cupFall * 25} />
           </div>
         )}
-        {f >= CUP_DROP - 4 && f < CUP_DROP + 26 && (
-          <div style={{position: 'absolute', left: Math.max(40, lerp(f, PLANE[0], PLANE[1], 1150, -520) - 40), top: planeY + 170, fontFamily: comic, fontSize: 64, color: '#fff', WebkitTextStroke: '3px #111', transform: 'rotate(-8deg)'}}>
-            MY COFFEE!
-          </div>
-        )}
+
 
         {/* The launched chair drifting through space */}
         {f >= CHAIR[0] && f <= CHAIR[1] && (
@@ -100,7 +111,7 @@ export const S4Flight: React.FC = () => {
         {/* Alien with a CASH OUT sign; the coffee finally lands on him */}
         {f >= ALIEN_IN && (
           <div style={{position: 'absolute', left: alienX, top: 950 + Math.sin(f / 6) * 14}}>
-            <Alien width={340} drip={splatted ? lerp(f, SPLAT, SPLAT + 20, 0.3, 1) : 0} mouth={splatted ? 'o' : 'flat'} wave={f / 3} />
+            <NightAlien width={340} drip={splatted ? lerp(f, SPLAT, SPLAT + 20, 0.3, 1) : 0} shocked={splatted} wave={f / 3} />
           </div>
         )}
         {f >= SPLAT - 14 && f < SPLAT && (
@@ -108,11 +119,26 @@ export const S4Flight: React.FC = () => {
             <Cup size={60} spin={f * 25} />
           </div>
         )}
-        {f >= SPLAT && f < SPLAT + 22 && (
-          <div style={{position: 'absolute', left: alienX + 40, top: 820, fontFamily: comic, fontSize: 110, color: '#8a5a2b', WebkitTextStroke: '4px #111', transform: `rotate(-10deg) scale(${lerp(f, SPLAT, SPLAT + 5, 0.5, 1)})`}}>
-            SPLASH!
-          </div>
-        )}
+        {f >= SPLAT &&
+          Array.from({length: 14}).map((_, i) => {
+            const t = f - SPLAT;
+            return (
+              <div
+                key={i}
+                style={{
+                  position: 'absolute',
+                  left: alienX + 170 + Math.cos(i * 0.9) * t * (6 + (i % 4)),
+                  top: 960 - Math.abs(Math.sin(i * 0.9)) * t * 9 + t * t * 0.5,
+                  width: 12,
+                  height: 12,
+                  borderRadius: '50%',
+                  background: '#4a2c14',
+                  boxShadow: 'inset -2px -2px 0 rgba(255,220,180,0.4)',
+                  opacity: lerp(t, 10, 24, 1, 0),
+                }}
+              />
+            );
+          })}
       </Shake>
 
       {/* Multiplier */}
@@ -132,6 +158,10 @@ export const S4Flight: React.FC = () => {
       >
         {m.toFixed(2)}x
       </div>
+
+      <Caption from={CUP_DROP - 2} to={CUP_DROP + 30} speaker="" text="[ the pilot drops his coffee ]" />
+      <Caption from={CHAIR[0] + 6} to={CHAIR[1] - 10} speaker="" text="[ the chair, in orbit ]" />
+      <Caption from={SPLAT} to={FLIGHT_LEN - 1} speaker="" text="[ the coffee finds a new home ]" />
 
       <Sfx name="rumble" at={0} volume={0.55} />
       <Sfx name="launch" at={0} volume={0.6} />
